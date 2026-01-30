@@ -1,0 +1,12 @@
+export { default as Nav } from './Nav.svelte';
+export { default as Hero } from './Hero.svelte';
+export { default as Problem } from './Problem.svelte';
+export { default as Solution } from './Solution.svelte';
+export { default as HowItWorks } from './HowItWorks.svelte';
+export { default as Credentials } from './Credentials.svelte';
+export { default as Features } from './Features.svelte';
+export { default as Audience } from './Audience.svelte';
+export { default as Testimonials } from './Testimonials.svelte';
+export { default as FAQ } from './FAQ.svelte';
+export { default as PricingCTA } from './PricingCTA.svelte';
+export { default as Footer } from './Footer.svelte';

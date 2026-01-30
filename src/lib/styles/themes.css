@@ -1,0 +1,38 @@
+:root,
+.light {
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f7f7f9;
+  --color-bg-tertiary: #ededf2;
+  --color-accent-gold: #c9a962;
+  --color-accent-gold-light: #e4d4a5;
+  --color-accent-gold-dark: #9a7d3f;
+  --color-text-primary: #1a1a1f;
+  --color-text-secondary: #52525c;
+  --color-text-muted: #8a8a96;
+  --color-success: #34d399;
+  --color-danger: #ef4444;
+  --color-border: rgba(201, 169, 98, 0.2);
+  --color-gradient-gold: linear-gradient(135deg, #c9a962 0%, #e4d4a5 50%, #c9a962 100%);
+  --shadow-gold: 0 0 60px rgba(201, 169, 98, 0.15);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+  --nav-bg: rgba(255, 255, 255, 0.95);
+}
+
+.dark {
+  --color-bg-primary: #0a0a0f;
+  --color-bg-secondary: #12121a;
+  --color-bg-tertiary: #1a1a26;
+  --color-accent-gold: #c9a962;
+  --color-accent-gold-light: #e4d4a5;
+  --color-accent-gold-dark: #9a7d3f;
+  --color-text-primary: #f5f5f7;
+  --color-text-secondary: #a0a0a8;
+  --color-text-muted: #6b6b75;
+  --color-success: #34d399;
+  --color-danger: #ef4444;
+  --color-border: rgba(201, 169, 98, 0.15);
+  --color-gradient-gold: linear-gradient(135deg, #c9a962 0%, #e4d4a5 50%, #c9a962 100%);
+  --shadow-gold: 0 0 60px rgba(201, 169, 98, 0.15);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --nav-bg: rgba(10, 10, 15, 0.9);
+}
