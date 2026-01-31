@@ -498,6 +498,144 @@ function handleSubmit(event: SubmitEvent) {
 
 ---
 
+## Tailwind CSS v4 - Breakpoints & Responsive Design
+
+### Project Breakpoints
+
+```css
+/* app.css - Tailwind v4 CSS-first config */
+@theme {
+  --breakpoint-sm: 640px;   /* Mobile landscape */
+  --breakpoint-md: 768px;   /* Tablet */
+  --breakpoint-lg: 1024px;  /* Desktop */
+  --breakpoint-xl: 1280px;  /* Large desktop */
+  --breakpoint-2xl: 1536px; /* Ultra-wide */
+}
+```
+
+### Breakpoint Reference
+
+| Breakpoint | Min Width | Target Devices |
+|------------|-----------|----------------|
+| `sm:` | 640px | Mobile landscape, large phones |
+| `md:` | 768px | Tablets, small laptops |
+| `lg:` | 1024px | Desktops, laptops |
+| `xl:` | 1280px | Large desktops |
+| `2xl:` | 1536px | Ultra-wide monitors |
+
+### Mobile-First Pattern (Required)
+
+```svelte
+<!-- ✅ CORRECT: Mobile-first, then scale up -->
+<div class="
+  px-4 py-6
+  sm:px-6 sm:py-8
+  md:px-8 md:py-10
+  lg:px-12 lg:py-12
+  xl:max-w-7xl xl:mx-auto
+">
+  <h1 class="
+    text-2xl font-bold
+    sm:text-3xl
+    md:text-4xl
+    lg:text-5xl
+  ">
+    Trading Dashboard
+  </h1>
+</div>
+
+<!-- ❌ WRONG: Desktop-first -->
+<div class="px-12 py-12 sm:px-4 sm:py-6">
+```
+
+### Container Queries (Tailwind v4)
+
+```svelte
+<!-- Component responds to container size, not viewport -->
+<div class="@container">
+  <div class="
+    grid grid-cols-1
+    @md:grid-cols-2
+    @lg:grid-cols-3
+  ">
+    {#each traders as trader}
+      <TraderCard {trader} />
+    {/each}
+  </div>
+</div>
+```
+
+### Responsive Grid Patterns
+
+```svelte
+<!-- Trading Cards Grid -->
+<div class="
+  grid gap-4
+  grid-cols-1
+  sm:grid-cols-2
+  lg:grid-cols-3
+  xl:grid-cols-4
+">
+
+<!-- Sidebar Layout -->
+<div class="
+  flex flex-col
+  lg:flex-row lg:gap-8
+">
+  <aside class="
+    w-full
+    lg:w-64 lg:flex-shrink-0
+  ">
+  <main class="flex-1">
+</div>
+
+<!-- Hero Section -->
+<section class="
+  min-h-[50vh]
+  md:min-h-[60vh]
+  lg:min-h-[80vh]
+">
+```
+
+### Responsive Typography Scale
+
+| Element | Mobile | sm | md | lg | xl |
+|---------|--------|----|----|----|----|
+| H1 | `text-3xl` | `text-4xl` | `text-5xl` | `text-6xl` | `text-7xl` |
+| H2 | `text-2xl` | `text-3xl` | `text-4xl` | `text-5xl` | - |
+| H3 | `text-xl` | `text-2xl` | `text-3xl` | - | - |
+| Body | `text-base` | - | `text-lg` | - | - |
+| Small | `text-sm` | - | - | - | - |
+
+### Hide/Show Utilities
+
+```svelte
+<!-- Mobile nav: visible on mobile, hidden on desktop -->
+<nav class="block lg:hidden">
+
+<!-- Desktop nav: hidden on mobile, visible on desktop -->
+<nav class="hidden lg:block">
+
+<!-- Show only on specific breakpoints -->
+<div class="hidden md:block lg:hidden">
+  <!-- Only visible on tablets -->
+</div>
+```
+
+### Touch vs Pointer Detection
+
+```svelte
+<!-- Hover states only on devices that support hover -->
+<button class="
+  bg-blue-600
+  hover:bg-blue-700
+  @media(hover:hover):hover:scale-105
+  active:scale-95
+">
+```
+
+---
+
 ## File Structure
 
 ```
