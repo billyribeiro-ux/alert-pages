@@ -89,6 +89,7 @@
 		"@storyblok/svelte": "^5.2.16",
 		"@supabase/ssr": "^0.8.0",
 		"@sveltejs/enhanced-img": "^0.9.3",
+		"@sveltejs/mcp": "^0.1.20",
 		"@tanstack/svelte-form": "^1.28.0",
 		"@tanstack/svelte-query": "^6.0.18",
 		"@tanstack/svelte-table": "^8.21.3",
