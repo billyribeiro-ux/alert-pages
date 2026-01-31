@@ -13,45 +13,62 @@
   
   let isPanelOpen = $state(false);
   let activeTrader = $state(0);
+  let isAnimating = $state(false);
   
   onMount(() => {
     gsap.registerPlugin(ScrollTrigger);
     
     // Header animation
-    gsap.fromTo(headerRef,
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: headerRef,
-          start: 'top 85%',
-          once: true
+    if (headerRef) {
+      gsap.fromTo(headerRef,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: headerRef,
+            start: 'top 85%',
+            once: true
+          }
         }
-      }
-    );
+      );
+    }
     
     // Trigger card animation
-    gsap.fromTo(triggerRef,
-      { opacity: 0, y: 50, scale: 0.95 },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: triggerRef,
-          start: 'top 85%',
-          once: true
+    if (triggerRef) {
+      gsap.fromTo(triggerRef,
+        { opacity: 0, y: 50, scale: 0.95 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: triggerRef,
+            start: 'top 85%',
+            once: true
+          }
         }
+      );
+    }
+    
+    // Cleanup on unmount - restore body scroll if panel was open
+    return () => {
+      if (isPanelOpen) {
+        document.body.style.overflow = '';
       }
-    );
+      // Kill any ongoing GSAP animations for this component
+      gsap.killTweensOf([panelRef, panelContentRef, ...cardsRef].filter(Boolean));
+    };
   });
   
   async function openPanel() {
+    if (isAnimating || isPanelOpen) return;
+    isAnimating = true;
+    
     isPanelOpen = true;
     document.body.style.overflow = 'hidden';
     
@@ -67,13 +84,25 @@
       
       gsap.fromTo(panelContentRef,
         { opacity: 0, x: 50 },
-        { opacity: 1, x: 0, duration: 0.5, delay: 0.2, ease: 'power3.out' }
+        { 
+          opacity: 1, 
+          x: 0, 
+          duration: 0.5, 
+          delay: 0.2, 
+          ease: 'power3.out',
+          onComplete: () => {
+            isAnimating = false;
+          }
+        }
       );
+    } else {
+      isAnimating = false;
     }
   }
   
   function closePanel() {
-    if (!panelRef) return;
+    if (!panelRef || isAnimating) return;
+    isAnimating = true;
     
     gsap.to(panelRef, {
       x: '100%',
@@ -82,6 +111,7 @@
       onComplete: () => {
         isPanelOpen = false;
         document.body.style.overflow = '';
+        isAnimating = false;
       }
     });
   }
@@ -89,8 +119,17 @@
   function selectTrader(index: number) {
     if (activeTrader === index) return;
     
+    const currentCard = cardsRef[activeTrader];
+    const nextCard = cardsRef[index];
+    
+    // Guard against invalid array access
+    if (!currentCard || !nextCard) {
+      activeTrader = index;
+      return;
+    }
+    
     // Fade out current content
-    gsap.to(cardsRef[activeTrader], {
+    gsap.to(currentCard, {
       opacity: 0,
       x: -30,
       duration: 0.3,
@@ -99,7 +138,7 @@
         activeTrader = index;
         
         // Fade in new content
-        gsap.fromTo(cardsRef[index],
+        gsap.fromTo(nextCard,
           { opacity: 0, x: 30 },
           { opacity: 1, x: 0, duration: 0.4, ease: 'power3.out' }
         );
@@ -181,11 +220,13 @@
             class="selector-btn"
             class:active={activeTrader === index}
             onclick={() => selectTrader(index)}
+            aria-label="Select {trader.name}"
+            aria-pressed={activeTrader === index}
           >
             <div class="selector-avatar">
               <span>{trader.initials}</span>
             </div>
-            <span class="selector-name">{trader.name.split(' ')[0]}</span>
+            <span class="selector-name">{trader.name.split(' ')[0] || trader.name}</span>
           </button>
         {/each}
       </div>

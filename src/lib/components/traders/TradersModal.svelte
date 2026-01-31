@@ -7,18 +7,41 @@
     onClose: () => void;
   }
   
+  interface Particle {
+    id: number;
+    left: string;
+    top: string;
+    delay: string;
+    duration: string;
+  }
+  
   let { onClose }: Props = $props();
   
   let overlayRef: HTMLElement;
   let modalRef: HTMLElement;
   let cardsRef: HTMLElement[] = [];
   let activeTrader = $state(0);
+  let timeline: gsap.core.Timeline | null = null;
+  
+  // Reactive particle generation - no DOM manipulation needed
+  const PARTICLE_COUNT = 30;
+  const particles: Particle[] = Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
+    id: i,
+    left: `${Math.random() * 100}%`,
+    top: `${Math.random() * 100}%`,
+    delay: `${Math.random() * 5}s`,
+    duration: `${5 + Math.random() * 10}s`
+  }));
   
   onMount(() => {
-    // Entrance animation
-    const tl = gsap.timeline();
+    if (!overlayRef || !modalRef) return;
     
-    tl.fromTo(overlayRef,
+    // Entrance animation
+    timeline = gsap.timeline();
+    
+    const validCards = cardsRef.filter(Boolean);
+    
+    timeline.fromTo(overlayRef,
       { opacity: 0 },
       { opacity: 1, duration: 0.4, ease: 'power2.out' }
     )
@@ -26,42 +49,57 @@
       { opacity: 0, scale: 0.9, y: 50 },
       { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'back.out(1.4)' },
       '-=0.2'
-    )
-    .fromTo(cardsRef,
-      { opacity: 0, y: 40, rotateY: -15 },
-      { 
-        opacity: 1, 
-        y: 0, 
-        rotateY: 0,
-        duration: 0.6, 
-        stagger: 0.15,
-        ease: 'power3.out'
-      },
-      '-=0.3'
     );
     
-    // Particle effect
-    createParticles();
+    if (validCards.length > 0) {
+      timeline.fromTo(validCards,
+        { opacity: 0, y: 40, rotateY: -15 },
+        { 
+          opacity: 1, 
+          y: 0, 
+          rotateY: 0,
+          duration: 0.6, 
+          stagger: 0.15,
+          ease: 'power3.out'
+        },
+        '-=0.3'
+      );
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      timeline?.kill();
+      gsap.killTweensOf([overlayRef, modalRef, ...validCards].filter(Boolean));
+    };
   });
   
   function handleClose() {
-    const tl = gsap.timeline({
+    if (!overlayRef || !modalRef) {
+      onClose();
+      return;
+    }
+    
+    const validCards = cardsRef.filter(Boolean);
+    const closeTl = gsap.timeline({
       onComplete: onClose
     });
     
-    tl.to(cardsRef, {
-      opacity: 0,
-      y: -30,
-      duration: 0.3,
-      stagger: 0.05,
-      ease: 'power2.in'
-    })
-    .to(modalRef, {
+    if (validCards.length > 0) {
+      closeTl.to(validCards, {
+        opacity: 0,
+        y: -30,
+        duration: 0.3,
+        stagger: 0.05,
+        ease: 'power2.in'
+      });
+    }
+    
+    closeTl.to(modalRef, {
       opacity: 0,
       scale: 0.95,
       duration: 0.3,
       ease: 'power2.in'
-    }, '-=0.2')
+    }, validCards.length > 0 ? '-=0.2' : 0)
     .to(overlayRef, {
       opacity: 0,
       duration: 0.3,
@@ -69,39 +107,18 @@
     }, '-=0.2');
   }
   
-  function createParticles() {
-    const container = document.querySelector('.particles-container');
-    if (!container) return;
-    
-    for (let i = 0; i < 30; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      particle.style.left = `${Math.random() * 100}%`;
-      particle.style.top = `${Math.random() * 100}%`;
-      particle.style.animationDelay = `${Math.random() * 5}s`;
-      particle.style.animationDuration = `${5 + Math.random() * 10}s`;
-      container.appendChild(particle);
-    }
-  }
-  
   function selectTrader(index: number) {
     activeTrader = index;
     
-    // Animate card emphasis
+    // Animate card emphasis with null safety
     cardsRef.forEach((card, i) => {
-      if (i === index) {
-        gsap.to(card, {
-          scale: 1.02,
-          duration: 0.3,
-          ease: 'power2.out'
-        });
-      } else {
-        gsap.to(card, {
-          scale: 1,
-          duration: 0.3,
-          ease: 'power2.out'
-        });
-      }
+      if (!card) return;
+      
+      gsap.to(card, {
+        scale: i === index ? 1.02 : 1,
+        duration: 0.3,
+        ease: 'power2.out'
+      });
     });
   }
   
@@ -139,7 +156,14 @@
     onclick={handleOverlayClick}
     aria-label="Close modal"
   ></button>
-  <div class="particles-container"></div>
+  <div class="particles-container">
+    {#each particles as particle (particle.id)}
+      <div 
+        class="particle"
+        style="left: {particle.left}; top: {particle.top}; animation-delay: {particle.delay}; animation-duration: {particle.duration};"
+      ></div>
+    {/each}
+  </div>
   
   <div 
     bind:this={modalRef} 
@@ -252,7 +276,7 @@
     pointer-events: none;
   }
   
-  :global(.particle) {
+  .particle {
     position: absolute;
     width: 4px;
     height: 4px;

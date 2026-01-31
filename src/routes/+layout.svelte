@@ -8,7 +8,14 @@
   
   onMount(() => {
     // Initialize theme from localStorage or default
-    const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
+    let savedTheme: 'dark' | 'light' | null = null;
+    
+    try {
+      savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
+    } catch {
+      // localStorage unavailable (private browsing, storage quota exceeded, etc.)
+    }
+    
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const initialTheme = savedTheme || (prefersDark ? 'dark' : 'dark'); // Default to dark
     

@@ -6,11 +6,15 @@
   
   let bubbleRef: HTMLElement;
   let isModalOpen = $state(false);
-  let isHovered = $state(false);
+  
+  // Derive display traders with safe access
+  const displayTraders = traders.slice(0, 2);
   
   onMount(() => {
+    if (!bubbleRef) return;
+    
     // Initial entrance animation
-    gsap.fromTo(bubbleRef,
+    const entranceTween = gsap.fromTo(bubbleRef,
       { 
         opacity: 0, 
         scale: 0.5,
@@ -27,7 +31,7 @@
     );
     
     // Floating animation
-    gsap.to(bubbleRef, {
+    const floatTween = gsap.to(bubbleRef, {
       y: -8,
       duration: 2,
       repeat: -1,
@@ -35,7 +39,10 @@
       ease: 'sine.inOut'
     });
     
-    // Magnetic effect
+    // Magnetic effect constants
+    const MAGNETIC_THRESHOLD = 200;
+    const MAGNETIC_STRENGTH = 0.3;
+    
     const handleMouseMove = (e: MouseEvent) => {
       if (!bubbleRef || isModalOpen) return;
       
@@ -48,31 +55,38 @@
         Math.pow(e.clientY - bubbleCenterY, 2)
       );
       
-      if (distance < 200) {
-        const strength = (200 - distance) / 200 * 0.3;
+      if (distance < MAGNETIC_THRESHOLD) {
+        const strength = (MAGNETIC_THRESHOLD - distance) / MAGNETIC_THRESHOLD * MAGNETIC_STRENGTH;
         const deltaX = (e.clientX - bubbleCenterX) * strength;
-        const deltaY = (e.clientY - bubbleCenterY) * strength;
         
         gsap.to(bubbleRef, {
           x: deltaX,
           duration: 0.3,
           ease: 'power2.out'
         });
+      } else {
+        // Reset position when outside threshold
+        gsap.to(bubbleRef, {
+          x: 0,
+          duration: 0.5,
+          ease: 'elastic.out(1, 0.5)'
+        });
       }
-    };
-    
-    const handleMouseLeave = () => {
-      gsap.to(bubbleRef, {
-        x: 0,
-        duration: 0.5,
-        ease: 'elastic.out(1, 0.5)'
-      });
     };
     
     window.addEventListener('mousemove', handleMouseMove);
     
+    // Comprehensive cleanup
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      entranceTween.kill();
+      floatTween.kill();
+      gsap.killTweensOf(bubbleRef);
+      
+      // Restore body overflow if modal was open during unmount
+      if (isModalOpen) {
+        document.body.style.overflow = '';
+      }
     };
   });
   
@@ -98,22 +112,18 @@
 <button
   bind:this={bubbleRef}
   class="traders-bubble"
-  class:hovered={isHovered}
   onclick={openModal}
-  onmouseenter={() => isHovered = true}
-  onmouseleave={() => isHovered = false}
   aria-label="Meet the traders"
 >
   <div class="bubble-glow"></div>
   <div class="bubble-ring"></div>
   
   <div class="avatars">
-    <div class="avatar" style="z-index: 2;">
-      <span>{traders[0].initials}</span>
-    </div>
-    <div class="avatar" style="z-index: 1;">
-      <span>{traders[1].initials}</span>
-    </div>
+    {#each displayTraders as trader, index}
+      <div class="avatar" style="z-index: {displayTraders.length - index};">
+        <span>{trader.initials}</span>
+      </div>
+    {/each}
   </div>
   
   <div class="bubble-text">
