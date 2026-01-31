@@ -5,6 +5,18 @@
 			"command": "npx",
 			"env": {},
 			"args": ["-y", "@sveltejs/mcp"]
+		},
+		"tailwind": {
+			"type": "stdio",
+			"command": "npx",
+			"env": {},
+			"args": ["-y", "@modelcontextprotocol/server-tailwindcss"]
+		},
+		"postgres": {
+			"type": "stdio",
+			"command": "npx",
+			"env": {},
+			"args": ["-y", "@modelcontextprotocol/server-postgres"]
 		}
 	}
 }

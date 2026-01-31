@@ -1,10 +1,10 @@
-# Svelte MCP Server - Agent Guide
+# MCP Servers - Agent Guide
 
-This project uses the Svelte MCP (Model Context Protocol) server to provide AI agents with comprehensive Svelte 5 and SvelteKit documentation.
+This project uses multiple MCP (Model Context Protocol) servers to provide AI agents with comprehensive documentation and tooling.
 
 ## Configuration
 
-The MCP server is configured in `.mcp.json` for local usage with Cursor IDE:
+The MCP servers are configured in `.mcp.json` for Cursor IDE and `~/.codeium/windsurf/mcp_config.json` for Windsurf:
 
 ```json
 {
@@ -14,15 +14,32 @@ The MCP server is configured in `.mcp.json` for local usage with Cursor IDE:
       "command": "npx",
       "env": {},
       "args": ["-y", "@sveltejs/mcp"]
+    },
+    "tailwind": {
+      "type": "stdio",
+      "command": "npx",
+      "env": {},
+      "args": ["-y", "@modelcontextprotocol/server-tailwindcss"]
+    },
+    "postgres": {
+      "type": "stdio",
+      "command": "npx",
+      "env": {},
+      "args": ["-y", "@modelcontextprotocol/server-postgres"]
     }
   }
 }
 ```
 
-## Available MCP Tools
+## Available MCP Servers
 
-### 1. `list-sections`
-Lists all available Svelte 5 and SvelteKit documentation sections with titles, use cases, and paths.
+### 1. Svelte MCP Server (`@sveltejs/mcp`)
+
+Provides comprehensive Svelte 5 and SvelteKit documentation.
+
+#### Tools:
+
+**`list-sections`** - Lists all available Svelte 5 and SvelteKit documentation sections with titles, use cases, and paths.
 
 **When to use:** At the start of any Svelte-related task to discover relevant documentation.
 
@@ -31,8 +48,7 @@ Lists all available Svelte 5 and SvelteKit documentation sections with titles, u
 npx -y @sveltejs/mcp list-sections
 ```
 
-### 2. `get-documentation`
-Retrieves full documentation content for specific sections (comma-separated).
+**`get-documentation`** - Retrieves full documentation content for specific sections (comma-separated).
 
 **When to use:** After identifying relevant sections from `list-sections`, fetch the detailed documentation.
 
@@ -43,8 +59,7 @@ Retrieves full documentation content for specific sections (comma-separated).
 npx -y @sveltejs/mcp get-documentation "runes,$state,$derived"
 ```
 
-### 3. `svelte-autofixer`
-Analyzes Svelte code and returns issues and suggestions.
+**`svelte-autofixer`** - Analyzes Svelte code and returns issues and suggestions.
 
 **When to use:** MUST use this tool whenever writing Svelte code before sending it to the user. Keep calling until no issues or suggestions are returned.
 
@@ -52,6 +67,36 @@ Analyzes Svelte code and returns issues and suggestions.
 ```bash
 npx -y @sveltejs/mcp svelte-autofixer --code="<script>let count = \$state(0)</script>"
 ```
+
+---
+
+### 2. Tailwind CSS MCP Server (`@modelcontextprotocol/server-tailwindcss`)
+
+Provides Tailwind CSS class documentation, utilities, and best practices.
+
+#### Capabilities:
+- Class name suggestions and completions
+- Utility documentation
+- Responsive design patterns
+- Custom configuration guidance
+- JIT mode optimizations
+
+**Use case:** When styling components with Tailwind CSS v4 (used in this project).
+
+---
+
+### 3. Postgres MCP Server (`@modelcontextprotocol/server-postgres`)
+
+Provides PostgreSQL database schema information, query optimization, and best practices.
+
+#### Capabilities:
+- Schema introspection
+- Query optimization suggestions
+- Index recommendations
+- Migration guidance
+- Type-safe query patterns
+
+**Use case:** When working with database schemas, queries, or migrations for the trading platform backend.
 
 ## Workflow for Agents
 
