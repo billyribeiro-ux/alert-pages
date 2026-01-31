@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { traders } from '$lib/data/traders';
@@ -7,8 +7,8 @@
   let sectionRef: HTMLElement;
   let headerRef: HTMLElement;
   let triggerRef: HTMLElement;
-  let panelRef: HTMLElement;
-  let panelContentRef: HTMLElement;
+  let panelRef: HTMLElement | undefined = $state(undefined);
+  let panelContentRef: HTMLElement | undefined = $state(undefined);
   let cardsRef: HTMLElement[] = [];
   
   let isPanelOpen = $state(false);
@@ -51,23 +51,30 @@
     );
   });
   
-  function openPanel() {
+  async function openPanel() {
     isPanelOpen = true;
     document.body.style.overflow = 'hidden';
     
-    // Animate panel entrance
-    gsap.fromTo(panelRef,
-      { x: '100%' },
-      { x: '0%', duration: 0.5, ease: 'power3.out' }
-    );
+    // Wait for DOM to render the conditional block
+    await tick();
     
-    gsap.fromTo(panelContentRef,
-      { opacity: 0, x: 50 },
-      { opacity: 1, x: 0, duration: 0.5, delay: 0.2, ease: 'power3.out' }
-    );
+    // Now panelRef and panelContentRef are available
+    if (panelRef && panelContentRef) {
+      gsap.fromTo(panelRef,
+        { x: '100%' },
+        { x: '0%', duration: 0.5, ease: 'power3.out' }
+      );
+      
+      gsap.fromTo(panelContentRef,
+        { opacity: 0, x: 50 },
+        { opacity: 1, x: 0, duration: 0.5, delay: 0.2, ease: 'power3.out' }
+      );
+    }
   }
   
   function closePanel() {
+    if (!panelRef) return;
+    
     gsap.to(panelRef, {
       x: '100%',
       duration: 0.4,
