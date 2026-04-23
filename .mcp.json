@@ -2,8 +2,9 @@
 	"mcpServers": {
 		"svelte": {
 			"type": "stdio",
-			"command": "pnpm",
-			"args": ["exec", "svelte-mcp"]
+			"command": "npx",
+			"env": {},
+			"args": ["-y", "@sveltejs/mcp"]
 		},
 		"tailwind": {
 			"type": "stdio",
