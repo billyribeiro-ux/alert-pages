@@ -167,7 +167,7 @@
       <div class="trigger-glow"></div>
       
       <div class="trigger-avatars">
-        {#each traders as trader, index}
+        {#each traders as trader, index (trader.id)}
           <div class="trigger-avatar" style="z-index: {traders.length - index};">
             <span>{trader.initials}</span>
           </div>
@@ -215,7 +215,7 @@
       
       <!-- Trader Selector -->
       <div class="trader-selector">
-        {#each traders as trader, index}
+        {#each traders as trader, index (trader.id)}
           <button 
             class="selector-btn"
             class:active={activeTrader === index}
@@ -233,7 +233,7 @@
       
       <!-- Trader Cards -->
       <div class="trader-cards">
-        {#each traders as trader, index}
+        {#each traders as trader, index (trader.id)}
           <div 
             bind:this={cardsRef[index]}
             class="trader-detail"
@@ -252,7 +252,7 @@
             </div>
             
             <div class="detail-bio">
-              {#each trader.bio.split('\n\n') as paragraph}
+              {#each trader.bio.split('\n\n') as paragraph, pIndex (pIndex)}
                 <p>{paragraph}</p>
               {/each}
             </div>
@@ -260,7 +260,7 @@
             <div class="detail-achievements">
               <h4>Highlights</h4>
               <div class="achievements-grid">
-                {#each trader.achievements as achievement}
+                {#each trader.achievements as achievement (achievement)}
                   <div class="achievement-item">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

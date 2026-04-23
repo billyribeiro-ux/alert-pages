@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { gsap } from 'gsap';
+  import { resolve } from '$app/paths';
   import { traders } from '$lib/data/traders';
   
   interface Props {
@@ -183,7 +184,7 @@
     </div>
     
     <div class="traders-grid">
-      {#each traders as trader, index}
+      {#each traders as trader, index (trader.id)}
         <div 
           bind:this={cardsRef[index]}
           class="trader-card"
@@ -210,7 +211,7 @@
           <div class="trader-achievements">
             <h4>Key Achievements</h4>
             <ul>
-              {#each trader.achievements as achievement}
+              {#each trader.achievements as achievement (achievement)}
                 <li>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -221,7 +222,7 @@
             </ul>
           </div>
           
-          <a href="/traders/{trader.id}" class="card-footer">
+          <a href={resolve(`/traders/${trader.id}`)} class="card-footer">
             <div class="footer-line"></div>
             <span class="read-more">Full Bio</span>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -233,7 +234,7 @@
     </div>
     
     <div class="modal-footer">
-      <a href="/pricing" class="cta-btn" onclick={handleClose}>
+      <a href={resolve('/pricing')} class="cta-btn" onclick={handleClose}>
         <span>Join Our Community</span>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />

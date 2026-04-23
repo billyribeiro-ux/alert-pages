@@ -65,7 +65,7 @@
     </div>
     
     <div class="faq-grid">
-      {#each faqs as faq, index}
+      {#each faqs as faq, index (faq.question)}
         <button
           bind:this={itemsRef[index]}
           class="faq-item"

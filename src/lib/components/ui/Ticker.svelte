@@ -45,7 +45,7 @@
       class="ticker-track"
       class:paused={isPaused}
     >
-      {#each allItems as item}
+      {#each allItems as item, i (i)}
         <button 
           class="ticker-item"
           type="button"

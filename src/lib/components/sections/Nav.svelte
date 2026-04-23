@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { gsap } from 'gsap';
+  import { resolve } from '$app/paths';
   import ThemeToggle from '$lib/components/theme/ThemeToggle.svelte';
   
   let navRef: HTMLElement;
@@ -28,7 +29,7 @@
 
 <nav bind:this={navRef} class="nav" class:scrolled>
   <div class="container nav-inner">
-    <a href="/" class="logo">
+    <a href={resolve('/')} class="logo">
       <div class="logo-icon">⚡</div>
       <span class="logo-text">Explosive Swings</span>
     </a>

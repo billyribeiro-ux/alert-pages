@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { resolve } from '$app/paths';
   
   let footerRef: HTMLElement;
   let contentRef: HTMLElement;
@@ -32,7 +33,7 @@
   <div class="container" bind:this={contentRef}>
     <div class="footer-main">
       <div class="footer-brand">
-        <a href="/" class="logo">
+        <a href={resolve('/')} class="logo">
           <div class="logo-icon">⚡</div>
           <span>Explosive Swings</span>
         </a>
@@ -42,14 +43,14 @@
       <div class="footer-links">
         <div class="link-group">
           <h4>Legal</h4>
-          <a href="/terms">Terms of Service</a>
-          <a href="/privacy">Privacy Policy</a>
-          <a href="/risk-disclosure">Risk Disclosure</a>
+          <a href={resolve('/terms')}>Terms of Service</a>
+          <a href={resolve('/privacy')}>Privacy Policy</a>
+          <a href={resolve('/risk-disclosure')}>Risk Disclosure</a>
         </div>
         <div class="link-group">
           <h4>Support</h4>
-          <a href="/contact">Contact Us</a>
-          <a href="/faq">FAQ</a>
+          <a href={resolve('/contact')}>Contact Us</a>
+          <a href={resolve('/faq')}>FAQ</a>
           <a href="mailto:support@explosiveswings.com">Email Support</a>
         </div>
         <div class="link-group">

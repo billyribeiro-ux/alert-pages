@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { gsap } from 'gsap';
+  import { resolve } from '$app/paths';
   import Nav from '$lib/components/sections/Nav.svelte';
   import Footer from '$lib/components/sections/Footer.svelte';
   import type { PageData } from './$types';
@@ -65,7 +66,7 @@
     <div bind:this={bioRef} class="bio-section">
       <h2>Full Biography</h2>
       <div class="bio-content">
-        {#each data.trader.bio.split('\n\n') as paragraph}
+        {#each data.trader.bio.split('\n\n') as paragraph, pIndex (pIndex)}
           <p>{paragraph}</p>
         {/each}
       </div>
@@ -74,7 +75,7 @@
     <div bind:this={achievementsRef} class="achievements-section">
       <h2>Key Achievements</h2>
       <div class="achievements-grid">
-        {#each data.trader.achievements as achievement}
+        {#each data.trader.achievements as achievement (achievement)}
           <div class="achievement-card">
             <div class="achievement-icon">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -91,7 +92,7 @@
       <div class="cta-card">
         <h3>Ready to Follow {data.trader.name.split(' ')[0]}'s Alerts?</h3>
         <p>Join Explosive Swings and get access to real-time trade alerts from our expert team.</p>
-        <a href="/#pricing" class="cta-btn">
+        <a href={resolve('/pricing')} class="cta-btn">
           <span>View Pricing</span>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />

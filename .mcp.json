@@ -2,21 +2,18 @@
 	"mcpServers": {
 		"svelte": {
 			"type": "stdio",
-			"command": "npx",
-			"env": {},
-			"args": ["-y", "@sveltejs/mcp"]
+			"command": "pnpm",
+			"args": ["exec", "svelte-mcp"]
 		},
 		"tailwind": {
 			"type": "stdio",
-			"command": "npx",
-			"env": {},
-			"args": ["-y", "@modelcontextprotocol/server-tailwindcss"]
+			"command": "pnpm",
+			"args": ["dlx", "-y", "@modelcontextprotocol/server-tailwindcss"]
 		},
 		"postgres": {
 			"type": "stdio",
-			"command": "npx",
-			"env": {},
-			"args": ["-y", "@modelcontextprotocol/server-postgres"]
+			"command": "pnpm",
+			"args": ["dlx", "-y", "@modelcontextprotocol/server-postgres"]
 		}
 	}
 }

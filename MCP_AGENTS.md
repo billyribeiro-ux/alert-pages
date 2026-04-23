@@ -42,25 +42,24 @@
   "mcpServers": {
     "svelte": {
       "type": "stdio",
-      "command": "npx",
-      "env": {},
-      "args": ["-y", "@sveltejs/mcp"]
+      "command": "pnpm",
+      "args": ["exec", "svelte-mcp"]
     },
     "tailwind": {
       "type": "stdio",
-      "command": "npx",
-      "env": {},
-      "args": ["-y", "@modelcontextprotocol/server-tailwindcss"]
+      "command": "pnpm",
+      "args": ["dlx", "-y", "@modelcontextprotocol/server-tailwindcss"]
     },
     "postgres": {
       "type": "stdio",
-      "command": "npx",
-      "env": {},
-      "args": ["-y", "@modelcontextprotocol/server-postgres"]
+      "command": "pnpm",
+      "args": ["dlx", "-y", "@modelcontextprotocol/server-postgres"]
     }
   }
 }
 ```
+
+Use this from the **project root** (where `pnpm-lock.yaml` lives) so `pnpm exec svelte-mcp` resolves the local `@sveltejs/mcp` binary.
 
 ---
 
@@ -694,9 +693,11 @@ src/
 ### If MCP Server Fails
 
 ```bash
-# Clear npx cache and retry
-npx clear-npx-cache
-npx -y @sveltejs/mcp list-sections
+# Reinstall dependencies and retry
+pnpm install
+
+# Optional: prune unreferenced packages from the store
+pnpm store prune
 
 # Verify Node version (requires 18+)
 node --version
@@ -716,13 +717,13 @@ If MCP unavailable, reference directly:
 ## Testing Commands
 
 ```bash
-npm run check      # TypeScript type checking
-npm run build      # Production build
-npm run dev        # Development server (port 5173)
-npm run preview    # Preview production build
-npm run lint       # ESLint + Prettier
-npm run test       # Vitest unit tests
-npm run test:e2e   # Playwright E2E tests
+pnpm run check      # TypeScript type checking
+pnpm run build      # Production build
+pnpm run dev        # Development server (port 5173)
+pnpm run preview    # Preview production build
+pnpm run lint       # ESLint + Prettier
+pnpm run test       # Vitest unit tests
+pnpm run test:e2e   # Playwright E2E tests
 ```
 
 ---
@@ -866,7 +867,7 @@ export function getTradingContext(): TradingState {
 5. **Guard browser APIs** - Check `browser` before DOM/window access
 6. **Scope GSAP** - Use `gsap.context()` with `ctx.revert()`
 7. **Validate with autofixer** - Run until zero issues
-8. **Test before shipping** - `npm run check && npm run build`
+8. **Test before shipping** - `pnpm run check && pnpm run build`
 
 ---
 

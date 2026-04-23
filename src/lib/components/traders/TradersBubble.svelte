@@ -119,7 +119,7 @@
   <div class="bubble-ring"></div>
   
   <div class="avatars">
-    {#each displayTraders as trader, index}
+    {#each displayTraders as trader, index (trader.id)}
       <div class="avatar" style="z-index: {displayTraders.length - index};">
         <span>{trader.initials}</span>
       </div>

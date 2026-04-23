@@ -78,7 +78,7 @@
     </div>
     
     <div class="features-grid">
-      {#each features as feature, index}
+      {#each features as feature, index (feature.title)}
         <div bind:this={cardsRef[index]} class="feature-card">
           <div class="feature-icon">
             {#if feature.icon === 'chart'}

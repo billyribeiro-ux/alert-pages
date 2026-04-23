@@ -60,7 +60,7 @@
     <p class="proof-label">Works with all major brokers</p>
     
     <div bind:this={logosRef} class="logos-grid">
-      {#each brokers as broker}
+      {#each brokers as broker (broker.abbr)}
         <div class="broker-logo">
           <span class="broker-abbr">{broker.abbr}</span>
           <span class="broker-name">{broker.name}</span>
