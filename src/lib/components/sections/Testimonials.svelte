@@ -4,52 +4,41 @@
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { testimonials } from '$lib/data/testimonials';
   
-  let sectionRef: HTMLElement;
   let headerRef: HTMLElement;
   let cardsRef: HTMLElement[] = [];
   
   onMount(() => {
     gsap.registerPlugin(ScrollTrigger);
-    
-    // Header animation
-    gsap.fromTo(headerRef,
+    const tweens: gsap.core.Tween[] = [];
+
+    tweens.push(gsap.fromTo(headerRef,
       { opacity: 0, y: 40 },
       {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: headerRef,
-          start: 'top 85%',
-          once: true
-        }
+        opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: headerRef, start: 'top 85%', once: true }
       }
-    );
-    
-    // Cards stagger animation
+    ));
+
     cardsRef.forEach((card, index) => {
-      gsap.fromTo(card,
+      tweens.push(gsap.fromTo(card,
         { opacity: 0, y: 50, rotateX: 10 },
         {
-          opacity: 1,
-          y: 0,
-          rotateX: 0,
-          duration: 0.7,
-          delay: index * 0.12,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 88%',
-            once: true
-          }
+          opacity: 1, y: 0, rotateX: 0, duration: 0.7, delay: index * 0.12, ease: 'power3.out',
+          scrollTrigger: { trigger: card, start: 'top 88%', once: true }
         }
-      );
+      ));
     });
+
+    return () => {
+      tweens.forEach(t => {
+        t.scrollTrigger?.kill();
+        t.kill();
+      });
+    };
   });
 </script>
 
-<section bind:this={sectionRef} class="testimonials">
+<section class="testimonials">
   <div class="container">
     <div bind:this={headerRef} class="section-header">
       <span class="section-eyebrow">Results</span>
@@ -60,7 +49,7 @@
       {#each testimonials as testimonial, index (testimonial.author)}
         <div bind:this={cardsRef[index]} class="testimonial-card">
           <div class="testimonial-stars">
-            {#each Array(testimonial.rating) as _, starIndex (starIndex)}
+            {#each Array(testimonial.rating) as _unused, starIndex (starIndex)}
               <svg viewBox="0 0 24 24">
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
               </svg>

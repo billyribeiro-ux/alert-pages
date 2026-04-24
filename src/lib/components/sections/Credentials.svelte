@@ -3,7 +3,6 @@
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   
-  let sectionRef: HTMLElement;
   let headerRef: HTMLElement;
   let quoteRef: HTMLElement;
   let bioRef: HTMLElement;
@@ -11,78 +10,52 @@
   
   onMount(() => {
     gsap.registerPlugin(ScrollTrigger);
-    
-    // Header animation
-    gsap.fromTo(headerRef,
+    const tweens: gsap.core.Tween[] = [];
+
+    tweens.push(gsap.fromTo(headerRef,
       { opacity: 0, y: 40 },
       {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: headerRef,
-          start: 'top 85%',
-          once: true
-        }
+        opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: headerRef, start: 'top 85%', once: true }
       }
-    );
-    
-    // Quote animation
-    gsap.fromTo(quoteRef,
+    ));
+
+    tweens.push(gsap.fromTo(quoteRef,
       { opacity: 0, x: -40 },
       {
-        opacity: 1,
-        x: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: quoteRef,
-          start: 'top 85%',
-          once: true
-        }
+        opacity: 1, x: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: quoteRef, start: 'top 85%', once: true }
       }
-    );
-    
-    // Bio animation
-    gsap.fromTo(bioRef,
+    ));
+
+    tweens.push(gsap.fromTo(bioRef,
       { opacity: 0, y: 30 },
       {
-        opacity: 1,
-        y: 0,
-        duration: 0.7,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: bioRef,
-          start: 'top 85%',
-          once: true
-        }
+        opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+        scrollTrigger: { trigger: bioRef, start: 'top 85%', once: true }
       }
-    );
-    
-    // Record cards stagger
+    ));
+
     recordCardsRef.forEach((card, index) => {
-      gsap.fromTo(card,
+      tweens.push(gsap.fromTo(card,
         { opacity: 0, y: 40, scale: 0.95 },
         {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.6,
-          delay: index * 0.1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 90%',
-            once: true
-          }
+          opacity: 1, y: 0, scale: 1, duration: 0.6, delay: index * 0.1, ease: 'power3.out',
+          scrollTrigger: { trigger: card, start: 'top 90%', once: true }
         }
-      );
+      ));
     });
+
+    return () => {
+      tweens.forEach(t => {
+        t.scrollTrigger?.kill();
+        t.kill();
+      });
+    };
   });
 </script>
 
-<section bind:this={sectionRef} class="credentials">
+<section class="credentials">
   <div class="glow-left"></div>
   <div class="glow-right"></div>
   

@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
   import { gsap } from 'gsap';
   
-  let heroRef: HTMLElement;
   let eyebrowRef: HTMLElement;
   let titleRef: HTMLElement;
   let subtitleRef: HTMLElement;
@@ -51,19 +50,21 @@
     });
   }
   
+  let rafId = 0;
+  let loopTimeout: ReturnType<typeof setTimeout> | null = null;
+  let introTl: gsap.core.Timeline | null = null;
+
   onMount(() => {
-    // Animate chart background
     if (canvasRef) {
       const ctx = canvasRef.getContext('2d');
       if (ctx) {
         animateChart(ctx);
       }
     }
-    
-    // GSAP timeline for text animations
-    const tl = gsap.timeline({ delay: 0.3 });
-    
-    tl.fromTo(eyebrowRef,
+
+    introTl = gsap.timeline({ delay: 0.3 });
+
+    introTl.fromTo(eyebrowRef,
       { opacity: 0, y: 20 },
       { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }
     )
@@ -92,8 +93,15 @@
       { opacity: 1, duration: 0.5, ease: 'power3.out' },
       '-=0.2'
     );
+
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      if (loopTimeout) clearTimeout(loopTimeout);
+      introTl?.kill();
+      gsap.killTweensOf([eyebrowRef, titleRef, subtitleRef, statsRef, ctaRef, noteRef].filter(Boolean));
+    };
   });
-  
+
   function animateChart(ctx: CanvasRenderingContext2D) {
     const canvas = canvasRef;
     const dpr = window.devicePixelRatio || 1;
@@ -196,15 +204,12 @@
         ctx.fill();
       }
       
-      // Animate
       if (animationProgress < 1) {
         animationProgress += 0.015;
-        requestAnimationFrame(draw);
+        rafId = requestAnimationFrame(draw);
       } else {
-        // Loop the animation
-        setTimeout(() => {
+        loopTimeout = setTimeout(() => {
           animationProgress = 0;
-          // Generate new data
           for (let i = 0; i < points; i++) {
             const progress = i / points;
             const trend = progress * 0.4;
@@ -212,16 +217,16 @@
             const noise = (Math.random() - 0.5) * 0.1;
             data[i] = 0.3 + trend + wave + noise;
           }
-          requestAnimationFrame(draw);
+          rafId = requestAnimationFrame(draw);
         }, 3000);
       }
     }
-    
+
     draw();
   }
 </script>
 
-<section bind:this={heroRef} class="hero">
+<section class="hero">
   <canvas bind:this={canvasRef} class="hero-chart"></canvas>
   <div class="hero-glow"></div>
   

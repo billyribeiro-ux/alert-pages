@@ -19,39 +19,31 @@
   
   onMount(() => {
     gsap.registerPlugin(ScrollTrigger);
-    
-    gsap.fromTo(sectionRef,
+    const tweens: gsap.core.Tween[] = [];
+
+    tweens.push(gsap.fromTo(sectionRef,
       { opacity: 0, y: 30 },
       {
-        opacity: 1,
-        y: 0,
-        duration: 0.7,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: sectionRef,
-          start: 'top 90%',
-          once: true
-        }
+        opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+        scrollTrigger: { trigger: sectionRef, start: 'top 90%', once: true }
       }
-    );
-    
-    // Stagger logos
+    ));
+
     const logos = logosRef.querySelectorAll('.broker-logo');
-    gsap.fromTo(logos,
+    tweens.push(gsap.fromTo(logos,
       { opacity: 0, scale: 0.8 },
       {
-        opacity: 1,
-        scale: 1,
-        duration: 0.4,
-        stagger: 0.05,
-        ease: 'back.out(1.7)',
-        scrollTrigger: {
-          trigger: logosRef,
-          start: 'top 90%',
-          once: true
-        }
+        opacity: 1, scale: 1, duration: 0.4, stagger: 0.05, ease: 'back.out(1.7)',
+        scrollTrigger: { trigger: logosRef, start: 'top 90%', once: true }
       }
-    );
+    ));
+
+    return () => {
+      tweens.forEach(t => {
+        t.scrollTrigger?.kill();
+        t.kill();
+      });
+    };
   });
 </script>
 

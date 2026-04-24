@@ -1,47 +1,39 @@
 <script lang="ts">
-  import { theme } from '$lib/stores/theme';
   import { onMount } from 'svelte';
   import { gsap } from 'gsap';
-  
-  let toggleRef: HTMLButtonElement;
+  import { theme, toggleTheme } from '$lib/stores/theme.svelte';
+
   let sunRef: SVGElement;
   let moonRef: SVGElement;
-  let currentTheme: 'dark' | 'light' = $state('dark');
-  
-  // Subscribe to theme store and update state
-  theme.subscribe(value => {
-    currentTheme = value;
-  });
-  
+
   onMount(() => {
     if (sunRef && moonRef) {
-      gsap.set(currentTheme === 'dark' ? sunRef : moonRef, { scale: 0, opacity: 0 });
+      gsap.set(theme.current === 'dark' ? sunRef : moonRef, { scale: 0, opacity: 0 });
     }
   });
-  
+
   function handleToggle() {
     const tl = gsap.timeline();
-    
-    if (currentTheme === 'dark') {
+
+    if (theme.current === 'dark') {
       tl.to(moonRef, { scale: 0, opacity: 0, rotate: -90, duration: 0.3, ease: 'back.in' })
         .to(sunRef, { scale: 1, opacity: 1, rotate: 0, duration: 0.4, ease: 'back.out' }, '-=0.1');
     } else {
       tl.to(sunRef, { scale: 0, opacity: 0, rotate: 90, duration: 0.3, ease: 'back.in' })
         .to(moonRef, { scale: 1, opacity: 1, rotate: 0, duration: 0.4, ease: 'back.out' }, '-=0.1');
     }
-    
-    theme.toggle();
+
+    toggleTheme();
   }
 </script>
 
 <button
-  bind:this={toggleRef}
   onclick={handleToggle}
   class="theme-toggle"
   aria-label="Toggle theme"
 >
   <div class="toggle-track">
-    <div class="toggle-thumb" class:dark={currentTheme === 'dark'}>
+    <div class="toggle-thumb" class:dark={theme.current === 'dark'}>
       <svg
         bind:this={sunRef}
         class="icon sun"
@@ -85,28 +77,28 @@
     border-radius: 9999px;
     transition: transform 0.2s ease;
   }
-  
+
   .theme-toggle:hover {
     transform: scale(1.05);
   }
-  
+
   .theme-toggle:active {
     transform: scale(0.95);
   }
-  
+
   .toggle-track {
     position: relative;
     width: 56px;
     height: 28px;
     border-radius: 9999px;
-    background: linear-gradient(135deg, 
-      var(--color-bg-tertiary) 0%, 
+    background: linear-gradient(135deg,
+      var(--color-bg-tertiary) 0%,
       var(--color-bg-secondary) 100%
     );
     border: 1px solid var(--color-border);
     overflow: hidden;
   }
-  
+
   .toggle-thumb {
     position: absolute;
     top: 2px;
@@ -121,18 +113,18 @@
     transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     box-shadow: 0 2px 8px rgba(201, 169, 98, 0.4);
   }
-  
+
   .toggle-thumb.dark {
     transform: translateX(28px);
   }
-  
+
   .icon {
     position: absolute;
     width: 14px;
     height: 14px;
     color: var(--color-bg-primary);
   }
-  
+
   .toggle-glow {
     position: absolute;
     inset: -2px;
@@ -142,7 +134,7 @@
     transition: opacity 0.3s ease;
     pointer-events: none;
   }
-  
+
   .theme-toggle:hover .toggle-glow {
     opacity: 1;
   }

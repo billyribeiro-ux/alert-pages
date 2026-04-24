@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { gsap } from 'gsap';
   
   let formRef = $state<HTMLFormElement | null>(null);
@@ -40,7 +39,7 @@
         );
       }
       
-    } catch (error) {
+    } catch {
       errorMessage = 'Something went wrong. Please try again.';
     } finally {
       isSubmitting = false;

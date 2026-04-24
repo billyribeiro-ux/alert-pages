@@ -3,89 +3,63 @@
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   
-  let sectionRef: HTMLElement;
   let headerRef: HTMLElement;
   let stepsRef: HTMLElement[] = [];
   let lineRef: HTMLElement;
   
   onMount(() => {
     gsap.registerPlugin(ScrollTrigger);
-    
-    // Header animation
-    gsap.fromTo(headerRef,
+    const tweens: gsap.core.Tween[] = [];
+
+    tweens.push(gsap.fromTo(headerRef,
       { opacity: 0, y: 40 },
       {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: headerRef,
-          start: 'top 85%',
-          once: true
-        }
+        opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: headerRef, start: 'top 85%', once: true }
       }
-    );
-    
-    // Connecting line animation
+    ));
+
     if (lineRef) {
-      gsap.fromTo(lineRef,
+      tweens.push(gsap.fromTo(lineRef,
         { scaleX: 0 },
         {
-          scaleX: 1,
-          duration: 1.2,
-          ease: 'power2.inOut',
-          scrollTrigger: {
-            trigger: lineRef,
-            start: 'top 80%',
-            once: true
-          }
+          scaleX: 1, duration: 1.2, ease: 'power2.inOut',
+          scrollTrigger: { trigger: lineRef, start: 'top 80%', once: true }
         }
-      );
+      ));
     }
-    
-    // Steps stagger animation
+
     stepsRef.forEach((step, index) => {
-      gsap.fromTo(step,
+      tweens.push(gsap.fromTo(step,
         { opacity: 0, y: 40 },
         {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          delay: index * 0.2,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: step,
-            start: 'top 85%',
-            once: true
-          }
+          opacity: 1, y: 0, duration: 0.6, delay: index * 0.2, ease: 'power3.out',
+          scrollTrigger: { trigger: step, start: 'top 85%', once: true }
         }
-      );
-      
-      // Number pulse animation
+      ));
+
       const number = step.querySelector('.step-number');
       if (number) {
-        gsap.fromTo(number,
+        tweens.push(gsap.fromTo(number,
           { scale: 0, rotation: -180 },
           {
-            scale: 1,
-            rotation: 0,
-            duration: 0.6,
-            delay: index * 0.2 + 0.2,
-            ease: 'back.out(1.7)',
-            scrollTrigger: {
-              trigger: step,
-              start: 'top 85%',
-              once: true
-            }
+            scale: 1, rotation: 0, duration: 0.6, delay: index * 0.2 + 0.2, ease: 'back.out(1.7)',
+            scrollTrigger: { trigger: step, start: 'top 85%', once: true }
           }
-        );
+        ));
       }
     });
+
+    return () => {
+      tweens.forEach(t => {
+        t.scrollTrigger?.kill();
+        t.kill();
+      });
+    };
   });
 </script>
 
-<section bind:this={sectionRef} class="how-it-works">
+<section class="how-it-works">
   <div class="container">
     <div bind:this={headerRef} class="section-header">
       <span class="section-eyebrow">The Process</span>

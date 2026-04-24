@@ -17,12 +17,40 @@
   }
   
   let { onClose }: Props = $props();
-  
+
   let overlayRef: HTMLElement;
   let modalRef: HTMLElement;
+  let closeBtnRef: HTMLButtonElement | undefined = $state();
   let cardsRef: HTMLElement[] = [];
   let activeTrader = $state(0);
   let timeline: gsap.core.Timeline | null = null;
+  const previouslyFocused = typeof document !== 'undefined' ? document.activeElement as HTMLElement | null : null;
+
+  function getFocusable(): HTMLElement[] {
+    if (!modalRef) return [];
+    return Array.from(
+      modalRef.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])'
+      )
+    ).filter(el => el.offsetParent !== null);
+  }
+
+  function handleFocusTrap(e: KeyboardEvent) {
+    if (e.key !== 'Tab') return;
+    const focusable = getFocusable();
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement as HTMLElement | null;
+
+    if (e.shiftKey && active === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
   
   // Reactive particle generation - no DOM manipulation needed
   const PARTICLE_COUNT = 30;
@@ -67,10 +95,13 @@
       );
     }
     
-    // Cleanup on unmount
+    // Move initial focus into the modal
+    queueMicrotask(() => closeBtnRef?.focus());
+
     return () => {
       timeline?.kill();
       gsap.killTweensOf([overlayRef, modalRef, ...validCards].filter(Boolean));
+      previouslyFocused?.focus?.();
     };
   });
   
@@ -130,16 +161,11 @@
   function handleOverlayKeydown(e: KeyboardEvent) {
     if (e.key === 'Escape') {
       handleClose();
+      return;
     }
+    handleFocusTrap(e);
   }
   
-  function handleModalClick(e: MouseEvent) {
-    e.stopPropagation();
-  }
-  
-  function handleModalKeydown(e: KeyboardEvent) {
-    e.stopPropagation();
-  }
 </script>
 
 <svelte:window onkeydown={handleOverlayKeydown} />
@@ -171,7 +197,7 @@
     class="modal-content"
     role="document"
   >
-    <button class="close-btn" onclick={handleClose} type="button" aria-label="Close modal">
+    <button bind:this={closeBtnRef} class="close-btn" onclick={handleClose} type="button" aria-label="Close modal">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
       </svg>

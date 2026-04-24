@@ -16,83 +16,53 @@
   
   onMount(() => {
     gsap.registerPlugin(ScrollTrigger);
-    
-    // Update countdown every second
+    const tweens: gsap.core.Tween[] = [];
+
     const updateCountdown = () => {
       timeLeft = calculateTimeLeft(launchEndDate);
     };
-    
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
-    
-    // Content animation
-    gsap.fromTo(contentRef,
+
+    tweens.push(gsap.fromTo(contentRef,
       { opacity: 0, y: 50 },
       {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: sectionRef,
-          start: 'top 75%',
-          once: true
-        }
+        opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: sectionRef, start: 'top 75%', once: true }
       }
-    );
-    
-    // Price animation
-    gsap.fromTo(priceRef,
+    ));
+
+    tweens.push(gsap.fromTo(priceRef,
       { opacity: 0, scale: 0.8 },
       {
-        opacity: 1,
-        scale: 1,
-        duration: 0.6,
-        delay: 0.2,
-        ease: 'back.out(1.7)',
-        scrollTrigger: {
-          trigger: sectionRef,
-          start: 'top 75%',
-          once: true
-        }
+        opacity: 1, scale: 1, duration: 0.6, delay: 0.2, ease: 'back.out(1.7)',
+        scrollTrigger: { trigger: sectionRef, start: 'top 75%', once: true }
       }
-    );
-    
-    // Countdown animation
-    gsap.fromTo(countdownRef,
+    ));
+
+    tweens.push(gsap.fromTo(countdownRef,
       { opacity: 0, y: 20 },
       {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        delay: 0.3,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: sectionRef,
-          start: 'top 75%',
-          once: true
-        }
+        opacity: 1, y: 0, duration: 0.6, delay: 0.3, ease: 'power3.out',
+        scrollTrigger: { trigger: sectionRef, start: 'top 75%', once: true }
       }
-    );
-    
-    // CTA animation
-    gsap.fromTo(ctaRef,
+    ));
+
+    tweens.push(gsap.fromTo(ctaRef,
       { opacity: 0, y: 20 },
       {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        delay: 0.4,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: sectionRef,
-          start: 'top 75%',
-          once: true
-        }
+        opacity: 1, y: 0, duration: 0.6, delay: 0.4, ease: 'power3.out',
+        scrollTrigger: { trigger: sectionRef, start: 'top 75%', once: true }
       }
-    );
-    
-    return () => clearInterval(interval);
+    ));
+
+    return () => {
+      clearInterval(interval);
+      tweens.forEach(t => {
+        t.scrollTrigger?.kill();
+        t.kill();
+      });
+    };
   });
   
   function padZero(num: number): string {

@@ -11,21 +11,19 @@
   
   onMount(() => {
     gsap.registerPlugin(ScrollTrigger);
-    
-    gsap.fromTo(contentRef,
+
+    const tween = gsap.fromTo(contentRef,
       { opacity: 0, y: 30 },
       {
-        opacity: 1,
-        y: 0,
-        duration: 0.7,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: footerRef,
-          start: 'top 95%',
-          once: true
-        }
+        opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+        scrollTrigger: { trigger: footerRef, start: 'top 95%', once: true }
       }
     );
+
+    return () => {
+      tween.scrollTrigger?.kill();
+      tween.kill();
+    };
   });
 </script>
 

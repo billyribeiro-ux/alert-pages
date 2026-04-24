@@ -11,18 +11,17 @@
     const handleScroll = () => {
       scrolled = window.scrollY > 50;
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    
-    // Initial animation
-    gsap.fromTo(
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    const introTween = gsap.fromTo(
       navRef,
       { y: -100, opacity: 0 },
       { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.2 }
     );
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      introTween.kill();
     };
   });
 </script>

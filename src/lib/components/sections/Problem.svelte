@@ -3,51 +3,41 @@
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   
-  let sectionRef: HTMLElement;
   let headerRef: HTMLElement;
   let painPointsRef: HTMLElement[] = [];
   
   onMount(() => {
     gsap.registerPlugin(ScrollTrigger);
-    
-    // Header animation
-    gsap.fromTo(headerRef,
+    const tweens: gsap.core.Tween[] = [];
+
+    tweens.push(gsap.fromTo(headerRef,
       { opacity: 0, y: 40 },
       {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: headerRef,
-          start: 'top 85%',
-          once: true
-        }
+        opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: headerRef, start: 'top 85%', once: true }
       }
-    );
-    
-    // Pain points stagger animation
+    ));
+
     painPointsRef.forEach((point, index) => {
-      gsap.fromTo(point,
+      tweens.push(gsap.fromTo(point,
         { opacity: 0, x: -30 },
         {
-          opacity: 1,
-          x: 0,
-          duration: 0.6,
-          delay: index * 0.15,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: point,
-            start: 'top 85%',
-            once: true
-          }
+          opacity: 1, x: 0, duration: 0.6, delay: index * 0.15, ease: 'power3.out',
+          scrollTrigger: { trigger: point, start: 'top 85%', once: true }
         }
-      );
+      ));
     });
+
+    return () => {
+      tweens.forEach(t => {
+        t.scrollTrigger?.kill();
+        t.kill();
+      });
+    };
   });
 </script>
 
-<section bind:this={sectionRef} class="problem">
+<section class="problem">
   <div class="container">
     <div class="problem-grid">
       <div bind:this={headerRef} class="problem-intro">

@@ -29,11 +29,15 @@
   
   onMount(() => {
     gsap.registerPlugin(ScrollTrigger);
-    
-    // Refresh ScrollTrigger after page load
-    setTimeout(() => {
+
+    const refreshTimeout = setTimeout(() => {
       ScrollTrigger.refresh();
     }, 100);
+
+    return () => {
+      clearTimeout(refreshTimeout);
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    };
   });
 </script>
 

@@ -15,7 +15,7 @@
   
   onMount(() => {
     const tl = gsap.timeline();
-    
+
     tl.fromTo(avatarRef,
       { opacity: 0, scale: 0.8 },
       { opacity: 1, scale: 1, duration: 0.6, ease: 'power3.out' }
@@ -35,6 +35,11 @@
       { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
       '-=0.3'
     );
+
+    return () => {
+      tl.kill();
+      gsap.killTweensOf([avatarRef, headerRef, bioRef, achievementsRef].filter(Boolean));
+    };
   });
 </script>
 

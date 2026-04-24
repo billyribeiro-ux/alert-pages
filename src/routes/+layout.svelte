@@ -1,26 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { theme } from '$lib/stores/theme';
+  import { theme, setTheme } from '$lib/stores/theme.svelte';
   import '$lib/styles/themes.css';
   import '../app.css';
-  
+
   let { children } = $props();
-  
+
   onMount(() => {
-    // Initialize theme from localStorage or default
-    let savedTheme: 'dark' | 'light' | null = null;
-    
-    try {
-      savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
-    } catch {
-      // localStorage unavailable (private browsing, storage quota exceeded, etc.)
-    }
-    
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'dark'); // Default to dark
-    
-    theme.set(initialTheme);
-    document.documentElement.classList.add(initialTheme);
+    setTheme(theme.current);
   });
 </script>
 

@@ -4,7 +4,6 @@
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { faqs } from '$lib/data/faqs';
   
-  let sectionRef: HTMLElement;
   let headerRef: HTMLElement;
   let itemsRef: HTMLElement[] = [];
   let openIndex = $state<number | null>(null);
@@ -19,45 +18,36 @@
   
   onMount(() => {
     gsap.registerPlugin(ScrollTrigger);
-    
-    // Header animation
-    gsap.fromTo(headerRef,
+    const tweens: gsap.core.Tween[] = [];
+
+    tweens.push(gsap.fromTo(headerRef,
       { opacity: 0, y: 40 },
       {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: headerRef,
-          start: 'top 85%',
-          once: true
-        }
+        opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: headerRef, start: 'top 85%', once: true }
       }
-    );
-    
-    // Items stagger animation
+    ));
+
     itemsRef.forEach((item, index) => {
-      gsap.fromTo(item,
+      tweens.push(gsap.fromTo(item,
         { opacity: 0, y: 30 },
         {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          delay: index * 0.08,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: item,
-            start: 'top 90%',
-            once: true
-          }
+          opacity: 1, y: 0, duration: 0.5, delay: index * 0.08, ease: 'power3.out',
+          scrollTrigger: { trigger: item, start: 'top 90%', once: true }
         }
-      );
+      ));
     });
+
+    return () => {
+      tweens.forEach(t => {
+        t.scrollTrigger?.kill();
+        t.kill();
+      });
+    };
   });
 </script>
 
-<section bind:this={sectionRef} class="faq">
+<section class="faq">
   <div class="container">
     <div bind:this={headerRef} class="section-header">
       <span class="section-eyebrow">Questions</span>

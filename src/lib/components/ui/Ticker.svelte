@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  
   interface TickerItem {
     symbol: string;
     action: 'BUY' | 'SELL' | 'TARGET HIT' | 'STOPPED';
@@ -25,7 +23,6 @@
   // Duplicate for seamless loop
   const allItems = [...tickerItems, ...tickerItems];
   
-  let tickerRef: HTMLElement;
   let isPaused = $state(false);
 </script>
 
@@ -40,11 +37,7 @@
   </div>
   
   <div class="ticker-container">
-    <div 
-      bind:this={tickerRef} 
-      class="ticker-track"
-      class:paused={isPaused}
-    >
+    <div class="ticker-track" class:paused={isPaused}>
       {#each allItems as item, i (i)}
         <button 
           class="ticker-item"
